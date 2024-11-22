@@ -26,4 +26,9 @@ public class Trainee {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id", unique = true, nullable = false)
     private User user;
+
+    public Trainee(Date dateOfBirth, String address) {
+        this.dateOfBirth = dateOfBirth;
+        this.address = address;
+    }
 }
