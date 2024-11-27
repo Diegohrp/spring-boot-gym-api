@@ -1,5 +1,6 @@
 package com.diegohrp.gymapi.service;
 
+import com.diegohrp.gymapi.aspects.LoggableTransaction;
 import com.diegohrp.gymapi.dto.trainee.CreateTraineeDto;
 import com.diegohrp.gymapi.entity.user.Trainee;
 import com.diegohrp.gymapi.entity.user.User;
@@ -15,13 +16,12 @@ public class TraineeService {
     private final UserService userService;
 
     @Transactional
+    @LoggableTransaction
     public Trainee create(CreateTraineeDto traineeDto) {
-        //logger.info("-------------------------------------------------- Trainee Creation --------------------------------------------------");
         User user = userService.create(traineeDto.user().firstName(), traineeDto.user().lastName());
         Trainee trainee = new Trainee(traineeDto.dateOfBirth(), traineeDto.address());
         trainee.setUser(user);
         repository.save(trainee);
-        //logger.info("New Trainee created: {}", trainee);
         return trainee;
     }
 }
