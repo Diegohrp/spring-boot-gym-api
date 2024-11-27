@@ -9,6 +9,8 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class TraineeService {
@@ -23,5 +25,10 @@ public class TraineeService {
         trainee.setUser(user);
         repository.save(trainee);
         return trainee;
+    }
+
+    @Transactional
+    public Optional<Trainee> getByUsername(String username) {
+        return repository.findByUsername(username);
     }
 }
