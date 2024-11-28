@@ -33,7 +33,7 @@ public class TraineeController {
     @PostMapping
     public ResponseEntity<UserCreatedDto> create(@RequestBody @Valid CreateTraineeDto traineeDto) {
         Trainee trainee = service.create(traineeDto);
-        return new ResponseEntity<>(userMapper.toCreateUserDto(trainee.getUser()), HttpStatus.CREATED);
+        return new ResponseEntity<>(userMapper.toCreatedUserDto(trainee.getUser()), HttpStatus.CREATED);
     }
 
     @GetMapping("/{username}")
