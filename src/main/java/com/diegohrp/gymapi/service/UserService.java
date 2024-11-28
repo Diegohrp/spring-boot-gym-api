@@ -1,5 +1,6 @@
 package com.diegohrp.gymapi.service;
 
+import com.diegohrp.gymapi.aspects.LoggableTransaction;
 import com.diegohrp.gymapi.dto.user.UpdateUserDto;
 import com.diegohrp.gymapi.entity.user.User;
 import com.diegohrp.gymapi.repository.UserRepository;
@@ -48,17 +49,19 @@ public class UserService {
     }
 
     @Transactional
-    public void changePassword(String username, String oldPassword, String newPassword) {
+    @LoggableTransaction
+    public Boolean changePassword(String username, String oldPassword, String newPassword) {
         Optional<User> user = repository.findByUsername(username);
         if (user.isPresent() && user.get().getPassword().equals(oldPassword)) {
             user.get().setPassword(newPassword);
             repository.save(user.get());
-            //logger.info("Password changed successfully");
-            return;
+            return true;
         }
-        //logger.error("It wasn't possible to change your password due to wrong credentials");
+        return false;
     }
 
+    @Transactional
+    @LoggableTransaction
     public boolean login(String username, String password) {
         Optional<User> user = repository.findByUsername(username);
         return user.isPresent() && user.get().getPassword().equals(password);

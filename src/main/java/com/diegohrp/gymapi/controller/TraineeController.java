@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.Optional;
 
@@ -39,7 +40,7 @@ public class TraineeController {
     public ResponseEntity<TraineeProfileDto> getTraineeProfile(@PathVariable String username) {
         Optional<Trainee> trainee = service.getByUsername(username);
         if (trainee.isEmpty()) {
-            throw new EntityNotFoundException("Trainee not found");
+            throw new HttpClientErrorException(HttpStatus.NOT_FOUND, "Trainee not found");
         }
         return new ResponseEntity<>(traineeMapper.toTraineeProfileDto(trainee.get()), HttpStatus.OK);
     }

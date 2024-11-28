@@ -1,4 +1,6 @@
 package com.diegohrp.gymapi.dto.user;
 
-public record LoginUserDto(String username, String password) {
+import jakarta.validation.constraints.NotBlank;
+
+public record LoginUserDto(@NotBlank String username, @NotBlank String password) {
 }
