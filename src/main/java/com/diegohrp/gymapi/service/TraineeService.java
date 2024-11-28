@@ -5,6 +5,7 @@ import com.diegohrp.gymapi.dto.trainee.CreateTraineeDto;
 import com.diegohrp.gymapi.entity.user.Trainee;
 import com.diegohrp.gymapi.entity.user.User;
 import com.diegohrp.gymapi.repository.TraineeRepository;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -28,7 +29,11 @@ public class TraineeService {
     }
 
     @Transactional
-    public Optional<Trainee> getByUsername(String username) {
-        return repository.findByUsername(username);
+    public Trainee getByUsername(String username) {
+        Optional<Trainee> trainee = repository.findByUsername(username);
+        if (trainee.isEmpty()) {
+            throw new EntityNotFoundException("Trainee not found");
+        }
+        return trainee.get();
     }
 }

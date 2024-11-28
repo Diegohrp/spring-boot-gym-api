@@ -15,7 +15,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
 
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/trainees")
@@ -25,10 +24,6 @@ public class TraineeController {
     private final UserMapper userMapper;
     private final TraineeMapper traineeMapper;
 
-    @GetMapping
-    public ResponseEntity<String> hello() {
-        return new ResponseEntity<>("HELLO", HttpStatus.OK);
-    }
 
     @PostMapping
     public ResponseEntity<UserCreatedDto> create(@RequestBody @Valid CreateTraineeDto traineeDto) {
@@ -38,10 +33,11 @@ public class TraineeController {
 
     @GetMapping("/{username}")
     public ResponseEntity<TraineeProfileDto> getTraineeProfile(@PathVariable String username) {
-        Optional<Trainee> trainee = service.getByUsername(username);
-        if (trainee.isEmpty()) {
-            throw new HttpClientErrorException(HttpStatus.NOT_FOUND, "Trainee not found");
+        try {
+            Trainee trainee = service.getByUsername(username);
+            return new ResponseEntity<>(traineeMapper.toTraineeProfileDto(trainee), HttpStatus.OK);
+        } catch (EntityNotFoundException e) {
+            throw new HttpClientErrorException(HttpStatus.NOT_FOUND, e.getMessage());
         }
-        return new ResponseEntity<>(traineeMapper.toTraineeProfileDto(trainee.get()), HttpStatus.OK);
     }
 }
