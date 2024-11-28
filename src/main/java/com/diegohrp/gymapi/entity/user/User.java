@@ -10,7 +10,7 @@ import lombok.*;
 @Getter
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(name = "first_name", nullable = false)
     private String firstName;
@@ -25,6 +25,9 @@ public class User {
 
     @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
     private Trainee trainee;
+
+    @OneToOne(mappedBy = "user")
+    private Trainer trainer;
 
     public User(String firstName, String lastName) {
         this.firstName = firstName;
