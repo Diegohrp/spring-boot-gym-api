@@ -59,6 +59,11 @@ public class UserService {
         //logger.error("It wasn't possible to change your password due to wrong credentials");
     }
 
+    public boolean login(String username, String password) {
+        Optional<User> user = repository.findByUsername(username);
+        return user.isPresent() && user.get().getPassword().equals(password);
+    }
+
 
     private Boolean userNameExists(String username) {
         return repository.findByUsername(username).isPresent();
