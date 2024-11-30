@@ -27,6 +27,6 @@ public class Trainer {
     @JoinColumn(name = "user_id", unique = true)
     private User user;
 
-    @OneToMany(mappedBy = "trainer")
+    @OneToMany(mappedBy = "trainer", fetch = FetchType.LAZY)
     private List<Training> trainings;
 }

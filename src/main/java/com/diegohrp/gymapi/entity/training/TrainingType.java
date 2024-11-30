@@ -20,9 +20,9 @@ public class TrainingType {
     @Column
     private String name;
 
-    @OneToMany(mappedBy = "speciality")
+    @OneToMany(mappedBy = "speciality", fetch = FetchType.LAZY)
     private List<Trainer> trainers;
 
-    @OneToMany(mappedBy = "type")
+    @OneToMany(mappedBy = "type", fetch = FetchType.LAZY)
     private List<Training> trainings;
 }
