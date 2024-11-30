@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.List;
-import java.util.Optional;
 
 
 @RestController
@@ -28,7 +27,6 @@ public class TraineeController {
     private final TraineeService service;
     private final TrainingService trainingService;
     private final UserMapper userMapper;
-    //private final TrainerMapper trainerMapper;
     private final TraineeMapper traineeMapper;
 
 
