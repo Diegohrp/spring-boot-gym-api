@@ -1,11 +1,11 @@
 package com.diegohrp.gymapi.mapper;
 
 import com.diegohrp.gymapi.dto.trainee.TraineeProfileDto;
+import com.diegohrp.gymapi.dto.trainee.UpdateTraineeDto;
 import com.diegohrp.gymapi.entity.user.Trainee;
 import com.diegohrp.gymapi.entity.user.Trainer;
 import com.diegohrp.gymapi.mapper.annotation.MapUserAtributes;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
+import org.mapstruct.*;
 
 import java.util.List;
 
@@ -16,4 +16,7 @@ public interface TraineeMapper {
     @Mapping(source = "entity.user.isActive", target = "isActive")
     @Mapping(source = "trainers", target = "trainersList")
     TraineeProfileDto toTraineeProfileDto(Trainee entity, List<Trainer> trainers);
+
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    void updateTraineeFromDto(UpdateTraineeDto dto, @MappingTarget Trainee trainee);
 }

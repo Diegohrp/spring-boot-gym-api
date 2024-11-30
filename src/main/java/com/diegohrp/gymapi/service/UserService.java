@@ -1,24 +1,23 @@
 package com.diegohrp.gymapi.service;
 
 import com.diegohrp.gymapi.aspects.LoggableTransaction;
-import com.diegohrp.gymapi.dto.user.UpdateUserDto;
+import com.diegohrp.gymapi.dto.trainee.UpdateTraineeDto;
 import com.diegohrp.gymapi.entity.user.User;
+import com.diegohrp.gymapi.mapper.UserMapper;
 import com.diegohrp.gymapi.repository.UserRepository;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
     private final UserRepository repository;
+    private final UserMapper mapper;
 
-    @Autowired
-    public UserService(UserRepository repository) {
-        this.repository = repository;
-    }
-
+    @LoggableTransaction
     @Transactional
     public User create(String firstName, String lastName) {
         User user = new User(firstName, lastName);
@@ -28,11 +27,10 @@ public class UserService {
         return user;
     }
 
-    public void updateUser(User user, UpdateUserDto userDto) {
-        user.setFirstName(userDto.firstName());
-        user.setLastName(userDto.lastName());
-        user.setPassword(userDto.newPassword());
-        user.setIsActive(userDto.isActive());
+    @Transactional
+    @LoggableTransaction
+    public void update(User user, UpdateTraineeDto traineeDto) {
+        mapper.updateUserFromDto(traineeDto, user);
         repository.save(user);
     }
 

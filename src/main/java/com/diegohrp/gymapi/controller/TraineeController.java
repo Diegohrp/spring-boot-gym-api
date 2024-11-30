@@ -2,6 +2,7 @@ package com.diegohrp.gymapi.controller;
 
 import com.diegohrp.gymapi.dto.trainee.CreateTraineeDto;
 import com.diegohrp.gymapi.dto.trainee.TraineeProfileDto;
+import com.diegohrp.gymapi.dto.trainee.UpdateTraineeDto;
 import com.diegohrp.gymapi.dto.user.UserCreatedDto;
 import com.diegohrp.gymapi.entity.user.Trainee;
 import com.diegohrp.gymapi.entity.user.Trainer;
@@ -28,12 +29,16 @@ public class TraineeController {
     private final TrainingService trainingService;
     private final UserMapper userMapper;
     private final TraineeMapper traineeMapper;
+    private final TraineeService traineeService;
 
 
     @PostMapping
     public ResponseEntity<UserCreatedDto> create(@RequestBody @Valid CreateTraineeDto traineeDto) {
         Trainee trainee = service.create(traineeDto);
-        return new ResponseEntity<>(userMapper.toCreatedUserDto(trainee.getUser()), HttpStatus.CREATED);
+        return new ResponseEntity<>(
+                userMapper.toCreatedUserDto(trainee.getUser()),
+                HttpStatus.CREATED
+        );
     }
 
     @GetMapping("/{username}")
@@ -41,7 +46,26 @@ public class TraineeController {
         try {
             Trainee trainee = service.getByUsername(username);
             List<Trainer> trainers = trainingService.getTrainers(trainee.getId());
-            return new ResponseEntity<>(traineeMapper.toTraineeProfileDto(trainee, trainers), HttpStatus.OK);
+            return new ResponseEntity<>(
+                    traineeMapper.toTraineeProfileDto(trainee, trainers),
+                    HttpStatus.OK
+            );
+
+        } catch (EntityNotFoundException e) {
+            throw new HttpClientErrorException(HttpStatus.NOT_FOUND, e.getMessage());
+        }
+    }
+
+    @PutMapping("/{username}")
+    public ResponseEntity<TraineeProfileDto> updateTraineeProfile(@PathVariable String username, @RequestBody @Valid UpdateTraineeDto traineeDto) {
+        try {
+            Trainee trainee = traineeService.update(username, traineeDto);
+            List<Trainer> trainers = trainingService.getTrainers(trainee.getId());
+            return new ResponseEntity<>(
+                    traineeMapper.toTraineeProfileDto(trainee, trainers),
+                    HttpStatus.OK
+            );
+
         } catch (EntityNotFoundException e) {
             throw new HttpClientErrorException(HttpStatus.NOT_FOUND, e.getMessage());
         }
