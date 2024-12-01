@@ -1,6 +1,7 @@
 package com.diegohrp.gymapi.service;
 
 import com.diegohrp.gymapi.aspects.LoggableTransaction;
+import com.diegohrp.gymapi.entity.user.Trainee;
 import com.diegohrp.gymapi.entity.user.Trainer;
 import com.diegohrp.gymapi.repository.TrainingRepository;
 import jakarta.transaction.Transactional;
@@ -19,5 +20,11 @@ public class TrainingService {
     @LoggableTransaction
     public List<Trainer> getTrainers(Long traineeId) {
         return repository.getTrainersFromTrainings(traineeId);
+    }
+
+    @Transactional
+    @LoggableTransaction
+    public List<Trainee> getTrainees(Long trainerId) {
+        return repository.getTraineesFromTrainings(trainerId);
     }
 }

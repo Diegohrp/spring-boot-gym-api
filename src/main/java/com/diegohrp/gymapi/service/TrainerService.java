@@ -10,6 +10,8 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class TrainerService {
@@ -30,5 +32,15 @@ public class TrainerService {
         } catch (EntityNotFoundException e) {
             throw new EntityNotFoundException("Error trying to create Trainer: " + e.getMessage());
         }
+    }
+
+    @Transactional
+    @LoggableTransaction
+    public Trainer getByUsername(String username) {
+        Optional<Trainer> trainer = repository.findByUsername(username);
+        if (trainer.isEmpty()) {
+            throw new EntityNotFoundException("Trainer not found");
+        }
+        return trainer.get();
     }
 }

@@ -8,6 +8,6 @@ import java.util.Optional;
 
 public interface TrainerRepository extends JpaRepository<Trainer, Long> {
 
-    @Query("SELECT t FROM Trainer t WHERE t.user.username = :username")
+    @Query("SELECT t FROM Trainer t JOIN FETCH t.user WHERE t.user.username = :username")
     Optional<Trainer> findByUsername(String username);
 }

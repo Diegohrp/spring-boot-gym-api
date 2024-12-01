@@ -1,6 +1,7 @@
 package com.diegohrp.gymapi.repository;
 
 import com.diegohrp.gymapi.entity.training.Training;
+import com.diegohrp.gymapi.entity.user.Trainee;
 import com.diegohrp.gymapi.entity.user.Trainer;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -15,4 +16,10 @@ public interface TrainingRepository extends JpaRepository<Training, Long> {
             "JOIN FETCH t.speciality " +
             "WHERE training.trainee.id = :traineeId")
     List<Trainer> getTrainersFromTrainings(Long traineeId);
+
+    @Query("SELECT DISTINCT t FROM Training training " +
+            "JOIN training.trainee t " +
+            "JOIN FETCH t.user " +
+            "WHERE training.trainer.id = :trainerId")
+    List<Trainee> getTraineesFromTrainings(Long trainerId);
 }
