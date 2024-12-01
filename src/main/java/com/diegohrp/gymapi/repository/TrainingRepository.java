@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface TrainingRepository extends JpaRepository<Training, Long> {
-    @Query("SELECT t FROM Training training " +
+    @Query("SELECT DISTINCT t FROM Training training " +
             "JOIN training.trainer t " +
             "JOIN FETCH t.user " +
             "JOIN FETCH t.speciality " +

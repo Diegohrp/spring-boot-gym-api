@@ -50,4 +50,11 @@ public class TraineeService {
         repository.save(trainee);
         return trainee;
     }
+
+    @Transactional
+    @LoggableTransaction
+    public void delete(String username) {
+        Trainee trainee = this.getByUsername(username);
+        repository.delete(trainee);
+    }
 }

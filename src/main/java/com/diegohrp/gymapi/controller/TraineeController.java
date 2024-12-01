@@ -18,7 +18,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 @RestController
@@ -65,6 +67,20 @@ public class TraineeController {
                     traineeMapper.toTraineeProfileDto(trainee, trainers),
                     HttpStatus.OK
             );
+
+        } catch (EntityNotFoundException e) {
+            throw new HttpClientErrorException(HttpStatus.NOT_FOUND, e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/{username}")
+    public ResponseEntity<Map<String, Object>> deleteTrainee(@PathVariable String username) {
+        try {
+            service.delete(username);
+            Map<String, Object> resp = new HashMap<>();
+            resp.put("status", HttpStatus.OK.value());
+            resp.put("message", "User: " + username + " successfully deleted");
+            return new ResponseEntity<>(resp, HttpStatus.OK);
 
         } catch (EntityNotFoundException e) {
             throw new HttpClientErrorException(HttpStatus.NOT_FOUND, e.getMessage());
