@@ -3,10 +3,12 @@ package com.diegohrp.gymapi.controller;
 
 import com.diegohrp.gymapi.dto.trainer.CreateTrainerDto;
 import com.diegohrp.gymapi.dto.trainer.TrainerProfileDto;
+import com.diegohrp.gymapi.dto.trainer.TrainerSummaryDto;
 import com.diegohrp.gymapi.dto.trainer.UpdateTrainerDto;
 import com.diegohrp.gymapi.dto.user.UserCreatedDto;
 import com.diegohrp.gymapi.entity.user.Trainee;
 import com.diegohrp.gymapi.entity.user.Trainer;
+import com.diegohrp.gymapi.mapper.SummaryMapper;
 import com.diegohrp.gymapi.mapper.TrainerMapper;
 import com.diegohrp.gymapi.mapper.UserMapper;
 import com.diegohrp.gymapi.service.TrainerService;
@@ -29,6 +31,7 @@ public class TrainerController {
     private final TrainingService trainingService;
     private final UserMapper userMapper;
     private final TrainerMapper trainerMapper;
+    private final SummaryMapper summaryMapper;
 
     @PostMapping
     public ResponseEntity<UserCreatedDto> create(@RequestBody @Valid CreateTrainerDto dto) {
@@ -68,5 +71,11 @@ public class TrainerController {
         } catch (EntityNotFoundException e) {
             throw new HttpClientErrorException(HttpStatus.NOT_FOUND, e.getMessage());
         }
+    }
+
+    @GetMapping("/active/unassigned-to")
+    public ResponseEntity<List<TrainerSummaryDto>> getUnassignedTrainers(@RequestParam String trainee) {
+        List<Trainer> trainers = service.getUnassigned(trainee);
+        return new ResponseEntity<>(summaryMapper.toTrainersList(trainers), HttpStatus.OK);
     }
 }
