@@ -2,6 +2,7 @@ package com.diegohrp.gymapi.service;
 
 import com.diegohrp.gymapi.aspects.LoggableTransaction;
 import com.diegohrp.gymapi.dto.trainee.UpdateTraineeDto;
+import com.diegohrp.gymapi.dto.trainer.UpdateTrainerDto;
 import com.diegohrp.gymapi.entity.user.User;
 import com.diegohrp.gymapi.mapper.UserMapper;
 import com.diegohrp.gymapi.repository.UserRepository;
@@ -31,6 +32,16 @@ public class UserService {
     @LoggableTransaction
     public void update(User user, UpdateTraineeDto traineeDto) {
         mapper.updateUserFromDto(traineeDto, user);
+        repository.save(user);
+    }
+
+    @Transactional
+    @LoggableTransaction
+    public void update(User user, UpdateTrainerDto trainerDto) {
+        System.out.println(trainerDto.firstName());
+        System.out.println(user.getFirstName());
+        mapper.updateUserFromDto(trainerDto, user);
+        System.out.println(user.getFirstName());
         repository.save(user);
     }
 

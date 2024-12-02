@@ -2,6 +2,7 @@ package com.diegohrp.gymapi.service;
 
 import com.diegohrp.gymapi.aspects.LoggableTransaction;
 import com.diegohrp.gymapi.dto.trainer.CreateTrainerDto;
+import com.diegohrp.gymapi.dto.trainer.UpdateTrainerDto;
 import com.diegohrp.gymapi.entity.user.Trainer;
 import com.diegohrp.gymapi.entity.user.User;
 import com.diegohrp.gymapi.repository.TrainerRepository;
@@ -42,5 +43,15 @@ public class TrainerService {
             throw new EntityNotFoundException("Trainer not found");
         }
         return trainer.get();
+    }
+
+    @Transactional
+    @LoggableTransaction
+    public Trainer update(String username, UpdateTrainerDto trainerDto) {
+        Trainer trainer = this.getByUsername(username);
+        User user = trainer.getUser();
+        userService.update(user, trainerDto);
+        repository.save(trainer);
+        return trainer;
     }
 }

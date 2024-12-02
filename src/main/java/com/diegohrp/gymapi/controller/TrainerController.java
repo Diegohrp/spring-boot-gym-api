@@ -1,8 +1,9 @@
 package com.diegohrp.gymapi.controller;
 
-import com.diegohrp.gymapi.dto.trainee.TraineeProfileDto;
+
 import com.diegohrp.gymapi.dto.trainer.CreateTrainerDto;
 import com.diegohrp.gymapi.dto.trainer.TrainerProfileDto;
+import com.diegohrp.gymapi.dto.trainer.UpdateTrainerDto;
 import com.diegohrp.gymapi.dto.user.UserCreatedDto;
 import com.diegohrp.gymapi.entity.user.Trainee;
 import com.diegohrp.gymapi.entity.user.Trainer;
@@ -46,6 +47,21 @@ public class TrainerController {
             List<Trainee> trainers = trainingService.getTrainees(trainer.getId());
             return new ResponseEntity<>(
                     trainerMapper.toTrainerProfileDto(trainer, trainers),
+                    HttpStatus.OK
+            );
+
+        } catch (EntityNotFoundException e) {
+            throw new HttpClientErrorException(HttpStatus.NOT_FOUND, e.getMessage());
+        }
+    }
+
+    @PutMapping("/{username}")
+    public ResponseEntity<TrainerProfileDto> updateTraineeProfile(@PathVariable String username, @RequestBody @Valid UpdateTrainerDto trainerDto) {
+        try {
+            Trainer trainer = service.update(username, trainerDto);
+            List<Trainee> trainees = trainingService.getTrainees(trainer.getId());
+            return new ResponseEntity<>(
+                    trainerMapper.toTrainerProfileDto(trainer, trainees),
                     HttpStatus.OK
             );
 
