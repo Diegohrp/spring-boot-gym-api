@@ -2,7 +2,9 @@ package com.diegohrp.gymapi.mapper;
 
 import com.diegohrp.gymapi.dto.trainings.TraineeTrainingDto;
 import com.diegohrp.gymapi.dto.trainings.TrainerTrainingDto;
+import com.diegohrp.gymapi.dto.trainings.TrainingTypeDto;
 import com.diegohrp.gymapi.entity.training.Training;
+import com.diegohrp.gymapi.entity.training.TrainingType;
 import com.diegohrp.gymapi.entity.user.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -24,6 +26,11 @@ public interface TrainingMapper {
     TrainerTrainingDto toTrainerTrainingDto(Training training);
 
     List<TrainerTrainingDto> toTrainerTrainings(List<Training> trainings);
+
+
+    TrainingTypeDto toTrainingType(TrainingType trainingType);
+
+    List<TrainingTypeDto> toTrainingTypesList(List<TrainingType> typesList);
 
     @Named("fullName")
     default String fullName(User user) {
