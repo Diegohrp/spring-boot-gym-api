@@ -22,7 +22,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
 
-import java.time.LocalDate;
+
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -106,4 +106,5 @@ public class TraineeController {
             throw new HttpClientErrorException(HttpStatus.NOT_FOUND, e.getMessage());
         }
     }
+
 }

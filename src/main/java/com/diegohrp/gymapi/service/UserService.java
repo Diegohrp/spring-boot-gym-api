@@ -3,9 +3,11 @@ package com.diegohrp.gymapi.service;
 import com.diegohrp.gymapi.aspects.LoggableTransaction;
 import com.diegohrp.gymapi.dto.trainee.UpdateTraineeDto;
 import com.diegohrp.gymapi.dto.trainer.UpdateTrainerDto;
+import com.diegohrp.gymapi.dto.user.UpdateStatusDto;
 import com.diegohrp.gymapi.entity.user.User;
 import com.diegohrp.gymapi.mapper.UserMapper;
 import com.diegohrp.gymapi.repository.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -46,15 +48,15 @@ public class UserService {
     }
 
     @Transactional
-    public void toggleActive(String username, Boolean active) {
-        Optional<User> user = repository.findByUsername(username);
+    @LoggableTransaction
+    public void toggleActive(UpdateStatusDto dto) {
+        Optional<User> user = repository.findByUsername(dto.username());
         if (user.isEmpty()) {
-            //logger.error("The user you want to change status does not exist");
-            return;
+            throw new EntityNotFoundException("User not found");
         }
-        user.get().setIsActive(active);
+        user.get().setIsActive(dto.isActive());
         repository.save(user.get());
-        //logger.info("User {} has change their isActive status to: {}", username, active);
+
     }
 
     @Transactional
