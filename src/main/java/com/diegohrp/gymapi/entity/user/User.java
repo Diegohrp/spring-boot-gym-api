@@ -23,11 +23,6 @@ public class User {
     @Column(name = "is_active", nullable = false)
     private Boolean isActive;
 
-    //@OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
-    //private Trainee trainee;
-
-    //@OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
-    //private Trainer trainer;
 
     public User(String firstName, String lastName) {
         this.firstName = firstName;

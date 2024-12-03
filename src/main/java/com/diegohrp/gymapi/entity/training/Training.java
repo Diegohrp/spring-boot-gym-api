@@ -37,4 +37,13 @@ public class Training {
     private Date date;
     @Column(nullable = false)
     private Integer duration;
+
+    public Training(Trainee trainee, Trainer trainer, TrainingType type, String name, Date date, Integer duration) {
+        this.trainee = trainee;
+        this.trainer = trainer;
+        this.type = type;
+        this.name = name;
+        this.date = date;
+        this.duration = duration;
+    }
 }

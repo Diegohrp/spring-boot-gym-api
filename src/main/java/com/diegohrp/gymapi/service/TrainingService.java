@@ -1,6 +1,7 @@
 package com.diegohrp.gymapi.service;
 
 import com.diegohrp.gymapi.aspects.LoggableTransaction;
+import com.diegohrp.gymapi.dto.trainings.CreateTrainingDto;
 import com.diegohrp.gymapi.entity.training.Training;
 import com.diegohrp.gymapi.entity.user.Trainee;
 import com.diegohrp.gymapi.entity.user.Trainer;
@@ -18,6 +19,24 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TrainingService {
     private final TrainingRepository repository;
+    private final TraineeService traineeService;
+    private final TrainerService trainerService;
+
+    @Transactional
+    @LoggableTransaction
+    public Training create(CreateTrainingDto trainingDto) {
+        Trainee trainee = traineeService.getByUsername(trainingDto.traineeUser());
+        Trainer trainer = trainerService.getByUsername(trainingDto.trainerUser());
+        Training training = new Training(
+                trainee,
+                trainer,
+                trainer.getSpeciality(),
+                trainingDto.name(),
+                trainingDto.date(),
+                trainingDto.duration());
+        repository.save(training);
+        return training;
+    }
 
     @Transactional
     @LoggableTransaction
