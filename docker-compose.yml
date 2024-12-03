@@ -1,0 +1,24 @@
+version: "3.9"
+services:
+  db:
+    image: postgres:latest
+    user: postgres
+    environment:
+      - POSTGRES_USER=dev
+      - POSTGRES_PASSWORD=devadmin123
+      - POSTGRES_DB=gym_db
+      - PGDATA=/var/lib/postgresql/data/pgdata
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - '5432:5432'
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    environment:
+      PGADMIN_DEFAULT_EMAIL: dev@mail.com
+      PGADMIN_DEFAULT_PASSWORD: devpswd123
+    ports:
+      - '8080:80'
+
+volumes:
+  postgres_data:
