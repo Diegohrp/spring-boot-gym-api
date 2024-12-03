@@ -36,4 +36,10 @@ public class TrainingService {
     public List<Training> getTraineeTrainings(String username, Date periodFrom, Date periodTo, String trainerName, Long trainingType) {
         return repository.findTraineeTrainings(username, periodFrom, periodTo, trainerName, trainingType);
     }
+
+    @Transactional
+    @LoggableTransaction
+    public List<Training> getTrainerTrainings(String username, Date periodFrom, Date periodTo, String traineeName) {
+        return repository.findTrainerTrainings(username, periodFrom, periodTo, traineeName);
+    }
 }

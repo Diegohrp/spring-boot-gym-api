@@ -83,4 +83,40 @@ public interface TrainingRepository extends JpaRepository<Training, Long>, JpaSp
             return criteriaBuilder.equal(typeJoin.get("id"), trainingTypeId);
         };
     }
+
+
+    default List<Training> findTrainerTrainings(
+            String username,
+            Date periodFrom,
+            Date periodTo,
+            String traineeName
+    ) {
+        Specification<Training> spec = Specification.where(byTrainerUsername(username))
+                .and(periodFrom != null ? byPeriodFrom(periodFrom) : null)
+                .and(periodTo != null ? byPeriodTo(periodTo) : null)
+                .and(traineeName != null ? byTraineeName(traineeName) : null);
+
+        return findAll(spec);
+    }
+
+    // Individual specifications
+    static Specification<Training> byTrainerUsername(String username) {
+        return (root, query, criteriaBuilder) -> {
+            Join<Training, Trainer> traineeJoin = root.join("trainer");
+            Join<Trainee, User> userJoin = traineeJoin.join("user");
+            return criteriaBuilder.equal(userJoin.get("username"), username);
+        };
+    }
+
+
+    static Specification<Training> byTraineeName(String trainerName) {
+        return (root, query, criteriaBuilder) -> {
+            Join<Training, Trainee> traineeJoin = root.join("trainee");
+            Join<Trainee, User> userJoin = traineeJoin.join("user");
+            return criteriaBuilder.equal(
+                    criteriaBuilder.lower(userJoin.get("firstName")),
+                    trainerName.toLowerCase()
+            );
+        };
+    }
 }
