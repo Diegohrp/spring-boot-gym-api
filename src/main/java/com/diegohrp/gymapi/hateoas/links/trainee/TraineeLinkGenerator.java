@@ -40,7 +40,6 @@ public class TraineeLinkGenerator implements LinkGenerator {
         }
 
         if (response instanceof TraineeProfileDto && method == HttpMethod.PUT) {
-            System.out.println("PUT");
             self = linkTo(methodOn(TraineeController.class).getTraineeProfile(username)).withSelfRel();
             return List.of(self, getProfile, getTrainings, deleteTrainee);
         }

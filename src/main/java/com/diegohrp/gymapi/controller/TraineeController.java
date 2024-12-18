@@ -10,7 +10,7 @@ import com.diegohrp.gymapi.dto.user.UserCreatedDto;
 import com.diegohrp.gymapi.entity.training.Training;
 import com.diegohrp.gymapi.entity.user.Trainee;
 import com.diegohrp.gymapi.entity.user.Trainer;
-import com.diegohrp.gymapi.hateoas.links.LinkGenerator;
+
 import com.diegohrp.gymapi.mapper.TraineeMapper;
 import com.diegohrp.gymapi.mapper.TrainingMapper;
 import com.diegohrp.gymapi.mapper.UserMapper;
@@ -54,7 +54,7 @@ public class TraineeController {
         UserCreatedDto userCreatedDto = userMapper.toCreatedUserDto(trainee.getUser());
 
         EntityModel<UserCreatedDto> entityModel = assemblerManager.getAssembler(UserCreatedDto.class)
-                .toModel(userCreatedDto, trainee.getUser().getUsername(), HttpMethod.POST);
+                .toModel(userCreatedDto, trainee.getUser().getUsername(), HttpMethod.POST, "trainee");
 
         return new ResponseEntity<>(entityModel, HttpStatus.CREATED);
     }
@@ -67,7 +67,7 @@ public class TraineeController {
             TraineeProfileDto profileDto = traineeMapper.toTraineeProfileDto(trainee, trainers);
 
             EntityModel<TraineeProfileDto> entityModel = assemblerManager.getAssembler(TraineeProfileDto.class)
-                    .toModel(profileDto, username, HttpMethod.GET);
+                    .toModel(profileDto, username, HttpMethod.GET, "trainee");
 
             return new ResponseEntity<>(entityModel, HttpStatus.OK);
 
@@ -87,7 +87,7 @@ public class TraineeController {
 
         TraineeTrainingsParams params = new TraineeTrainingsParams(periodFrom, periodTo, trainerName, trainingType);
         var entityModel = assemblerManager.getAssembler(TraineeTrainingDto.class)
-                .toCollectionModel(trainingsList, username, params, HttpMethod.GET);
+                .toCollectionModel(trainingsList, username, params, HttpMethod.GET, "trainee");
 
         return new ResponseEntity<>(entityModel, HttpStatus.OK);
     }
@@ -100,7 +100,7 @@ public class TraineeController {
             TraineeProfileDto profile = traineeMapper.toTraineeProfileDto(trainee, trainers);
 
             EntityModel<TraineeProfileDto> entityModel = assemblerManager.getAssembler(TraineeProfileDto.class)
-                    .toModel(profile, username, HttpMethod.PUT);
+                    .toModel(profile, username, HttpMethod.PUT, "trainee");
 
             return new ResponseEntity<>(entityModel, HttpStatus.OK);
 
