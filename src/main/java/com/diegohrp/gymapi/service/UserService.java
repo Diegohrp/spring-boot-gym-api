@@ -3,13 +3,20 @@ package com.diegohrp.gymapi.service;
 import com.diegohrp.gymapi.aspects.LoggableTransaction;
 import com.diegohrp.gymapi.dto.trainee.UpdateTraineeDto;
 import com.diegohrp.gymapi.dto.trainer.UpdateTrainerDto;
+import com.diegohrp.gymapi.dto.user.LoggedUserDto;
+import com.diegohrp.gymapi.dto.user.LoginUserDto;
 import com.diegohrp.gymapi.dto.user.UpdateStatusDto;
 import com.diegohrp.gymapi.entity.user.User;
 import com.diegohrp.gymapi.mapper.UserMapper;
 import com.diegohrp.gymapi.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -19,13 +26,19 @@ import java.util.Optional;
 public class UserService {
     private final UserRepository repository;
     private final UserMapper mapper;
+    private final JwtService jwtService;
+    private final LoginAttemptService loginAttemptService;
+    private final AuthenticationManager authenticationManager;
+    private final PasswordEncoder passwordEncoder;
 
     @LoggableTransaction
     @Transactional
     public User create(String firstName, String lastName) {
         User user = new User(firstName, lastName);
         user.setUsername(this.generateUsername(user.getFirstName(), user.getLastName()));
-        user.setPassword(this.generatePassword());
+        String plainPassword = this.generatePassword();
+        user.setPlainGeneratedPassword(plainPassword);
+        user.setPassword(passwordEncoder.encode(plainPassword));
         repository.save(user);
         return user;
     }
@@ -73,9 +86,32 @@ public class UserService {
 
     @Transactional
     @LoggableTransaction
-    public boolean login(String username, String password) {
-        Optional<User> user = repository.findByUsername(username);
-        return user.isPresent() && user.get().getPassword().equals(password);
+    public LoggedUserDto login(LoginUserDto credentials, HttpServletRequest request) {
+        System.out.println("Entra a login service");
+
+        String ip = getClientIP(request);
+        if (loginAttemptService.isBlocked(ip)) {
+            throw new RuntimeException("Too many attepts, this IP is blocked for 5 minutes");
+        }
+
+        try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            credentials.username(),
+                            credentials.password()
+                    )
+            );
+            loginAttemptService.loginSucceeded(ip);
+            User user = repository.findByUsername(credentials.username()).orElseThrow();
+            String jwt = jwtService.generateToken(user);
+
+            return new LoggedUserDto(user.getUsername(), jwt);
+
+
+        } catch (BadCredentialsException e) {
+            loginAttemptService.loginFailed(ip);
+            throw e;
+        }
     }
 
 
@@ -104,5 +140,13 @@ public class UserService {
             sb.append(character);
         }
         return sb.toString();
+    }
+
+    private String getClientIP(HttpServletRequest request) {
+        String xfHeader = request.getHeader("X-Forwarded-For");
+        if (xfHeader == null) {
+            return request.getRemoteAddr();
+        }
+        return xfHeader.split(",")[0];
     }
 }
