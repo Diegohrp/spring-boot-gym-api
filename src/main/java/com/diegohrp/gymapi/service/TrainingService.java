@@ -1,14 +1,18 @@
 package com.diegohrp.gymapi.service;
 
 import com.diegohrp.gymapi.aspects.LoggableTransaction;
+import com.diegohrp.gymapi.dto.trainer.TrainerWorkloadDto;
 import com.diegohrp.gymapi.dto.trainings.CreateTrainingDto;
 import com.diegohrp.gymapi.entity.training.Training;
 import com.diegohrp.gymapi.entity.user.Trainee;
 import com.diegohrp.gymapi.entity.user.Trainer;
+import com.diegohrp.gymapi.enums.ActionTypes;
+import com.diegohrp.gymapi.mapper.TrainerMapper;
 import com.diegohrp.gymapi.repository.TrainingRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 
 import java.util.Date;
@@ -21,6 +25,8 @@ public class TrainingService {
     private final TrainingRepository repository;
     private final TraineeService traineeService;
     private final TrainerService trainerService;
+    private final TrainerMapper trainerMapper;
+    private final RestTemplate restTemplate;
 
     @Transactional
     @LoggableTransaction
@@ -35,6 +41,14 @@ public class TrainingService {
                 trainingDto.date(),
                 trainingDto.duration());
         repository.save(training);
+
+        TrainerWorkloadDto workload = trainerMapper.toTrainerWorkloadDto(trainer, training, ActionTypes.ADD);
+        restTemplate.postForEntity(
+                "http://training-hours-service/training-hours/api/v1/trainers/training-hours",
+                workload,
+                Void.class
+        );
+
         return training;
     }
 
