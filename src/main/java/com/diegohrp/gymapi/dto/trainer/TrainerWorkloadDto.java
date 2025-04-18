@@ -13,5 +13,6 @@ public record TrainerWorkloadDto(
         Boolean isActive,
         LocalDate date,
         Integer duration,
+        Integer currentWorkload,
         ActionTypes actionType) {
 }

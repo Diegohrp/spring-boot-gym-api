@@ -30,5 +30,6 @@ public interface TrainerMapper {
     @Mapping(source = "entity.user.isActive", target = "isActive")
     @Mapping(source = "training.date", target = "date")
     @Mapping(source = "training.duration", target = "duration")
-    TrainerWorkloadDto toTrainerWorkloadDto(Trainer entity, Training training, ActionTypes actionType);
+    @Mapping(source = "trainingHours", target = "currentWorkload")
+    TrainerWorkloadDto toTrainerWorkloadDto(Trainer entity, Training training, Integer trainingHours, ActionTypes actionType);
 }
