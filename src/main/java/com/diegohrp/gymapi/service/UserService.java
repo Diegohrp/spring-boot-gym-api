@@ -53,10 +53,7 @@ public class UserService {
     @Transactional
     @LoggableTransaction
     public void update(User user, UpdateTrainerDto trainerDto) {
-        System.out.println(trainerDto.firstName());
-        System.out.println(user.getFirstName());
         mapper.updateUserFromDto(trainerDto, user);
-        System.out.println(user.getFirstName());
         repository.save(user);
     }
 
@@ -87,8 +84,6 @@ public class UserService {
     @Transactional
     @LoggableTransaction
     public LoggedUserDto login(LoginUserDto credentials, HttpServletRequest request) {
-        System.out.println("Entra a login service");
-
         String ip = getClientIP(request);
         if (loginAttemptService.isBlocked(ip)) {
             throw new RuntimeException("Too many attepts, this IP is blocked for 5 minutes");

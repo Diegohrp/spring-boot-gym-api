@@ -1,18 +1,24 @@
 package com.diegohrp.gymapi.dto.trainer;
 
 import com.diegohrp.gymapi.enums.ActionTypes;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDate;
 
-public record TrainerWorkloadDto(
-        String username,
-        String firstName,
-        String lastName,
-        Boolean isActive,
-        LocalDate date,
-        Integer duration,
-        Integer currentWorkload,
-        ActionTypes actionType) {
+@Setter
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
+public class TrainerWorkloadDto {
+    private String username;
+    private String firstName;
+    private String lastName;
+    private Boolean isActive;
+    private LocalDate date;
+    private Integer duration;
+    private Integer currentWorkload;
+    private ActionTypes actionType;
 }
