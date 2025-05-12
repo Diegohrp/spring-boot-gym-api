@@ -12,6 +12,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -29,6 +30,12 @@ public interface TrainingRepository extends JpaRepository<Training, Long>, JpaSp
             "JOIN FETCH t.user " +
             "WHERE training.trainer.id = :trainerId")
     List<Trainee> getTraineesFromTrainings(Long trainerId);
+
+    @Query("SELECT SUM(t.duration) FROM Training t " +
+            "WHERE t.trainer.id = :trainerId " +
+            "AND t.date >= :startDate " +
+            "AND t.date < :endDate")
+    Integer getTrainingHours(Long trainerId, LocalDate startDate, LocalDate endDate);
 
 
     default List<Training> findTraineeTrainings(

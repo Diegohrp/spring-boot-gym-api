@@ -7,17 +7,20 @@ import com.diegohrp.gymapi.entity.user.Trainee;
 import com.diegohrp.gymapi.entity.user.Trainer;
 import com.diegohrp.gymapi.entity.user.User;
 import com.diegohrp.gymapi.repository.TrainingRepository;
+
+import java.time.LocalDate;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.slf4j.Logger;
+
 
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
+
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -42,13 +45,13 @@ class TrainingServiceTest {
 
     @BeforeEach
     void setUp() {
-        trainingDto = new CreateTrainingDto("trainee", "trainer", "Cardio Session", new Date(), 60);
+        trainingDto = new CreateTrainingDto("trainee", "trainer", "Cardio Session", LocalDate.now(), 60);
         Trainer trainer = new Trainer();
         trainer.setUser(new User("John", "Doe"));
         trainer.setSpeciality(new TrainingType());
         Trainee trainee = new Trainee(new Date(), "123 Main St");
         trainee.setUser(new User("Jane", "Doe"));
-        training = new Training(trainee, trainer, new TrainingType(), "Some training", new Date(), 40);
+        training = new Training(trainee, trainer, new TrainingType(), "Some training", LocalDate.now(), 40);
     }
 
     @Test

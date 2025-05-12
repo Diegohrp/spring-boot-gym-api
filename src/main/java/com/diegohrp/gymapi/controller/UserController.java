@@ -1,10 +1,12 @@
 package com.diegohrp.gymapi.controller;
 
 import com.diegohrp.gymapi.dto.user.ChangePasswordDto;
+import com.diegohrp.gymapi.dto.user.LoggedUserDto;
 import com.diegohrp.gymapi.dto.user.LoginUserDto;
 import com.diegohrp.gymapi.dto.user.UpdateStatusDto;
 import com.diegohrp.gymapi.service.UserService;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -23,17 +25,16 @@ public class UserController {
     private final UserService service;
 
     @GetMapping("/login")
-    public ResponseEntity<Map<String, Object>> login(@RequestBody @Valid LoginUserDto credentials) {
-        Map<String, Object> resp = new HashMap<>();
-        if (service.login(credentials.username(), credentials.password())) {
-            resp.put("status", HttpStatus.OK.value());
-            resp.put("message", "Login successful");
-            return new ResponseEntity<>(resp, HttpStatus.OK);
+    public ResponseEntity<LoggedUserDto> login(@RequestBody @Valid LoginUserDto credentials, HttpServletRequest request) {
+        try {
+            LoggedUserDto loggedUserDto = service.login(credentials, request);
+            return new ResponseEntity<>(loggedUserDto, HttpStatus.OK);
+        } catch (RuntimeException e) {
+            throw new HttpClientErrorException(HttpStatus.UNAUTHORIZED, e.getMessage());
         }
-        throw new HttpClientErrorException(HttpStatus.UNAUTHORIZED, "Invaid credentials");
     }
 
-    @PutMapping("/login")
+    @PutMapping("/password")
     public ResponseEntity<Map<String, Object>> changePassword(@RequestBody @Valid ChangePasswordDto dto) {
         Map<String, Object> resp = new HashMap<>();
         if (service.changePassword(dto.username(), dto.oldPassword(), dto.newPassword())) {

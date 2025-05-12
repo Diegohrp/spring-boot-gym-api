@@ -1,16 +1,24 @@
 package com.diegohrp.gymapi.service;
 
 import com.diegohrp.gymapi.aspects.LoggableTransaction;
+import com.diegohrp.gymapi.client.TrainerWorkloadClient;
+import com.diegohrp.gymapi.dto.trainer.TrainerWorkloadDto;
 import com.diegohrp.gymapi.dto.trainings.CreateTrainingDto;
 import com.diegohrp.gymapi.entity.training.Training;
 import com.diegohrp.gymapi.entity.user.Trainee;
 import com.diegohrp.gymapi.entity.user.Trainer;
+import com.diegohrp.gymapi.enums.ActionTypes;
+import com.diegohrp.gymapi.mapper.TrainerMapper;
 import com.diegohrp.gymapi.repository.TrainingRepository;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 
+import java.time.LocalDate;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -21,6 +29,9 @@ public class TrainingService {
     private final TrainingRepository repository;
     private final TraineeService traineeService;
     private final TrainerService trainerService;
+    private final TrainerMapper trainerMapper;
+    private final TrainerWorkloadClient trainerWorkloadClient;
+    private final TrainingRepository trainingRepository;
 
     @Transactional
     @LoggableTransaction
@@ -35,8 +46,19 @@ public class TrainingService {
                 trainingDto.date(),
                 trainingDto.duration());
         repository.save(training);
+
+        int year = trainingDto.date().getYear();
+        int month = trainingDto.date().getMonthValue();
+        Integer trainingHours = repository.getTrainingHours(trainer.getId(),
+                LocalDate.of(year, month, 1),
+                LocalDate.of(year, month + 1, 1)
+        );
+
+        TrainerWorkloadDto workload = trainerMapper.toTrainerWorkloadDto(trainer, training,trainingHours, ActionTypes.ADD);
+        trainerWorkloadClient.send(workload);
         return training;
     }
+
 
     @Transactional
     @LoggableTransaction

@@ -8,6 +8,7 @@ import org.mapstruct.*;
 
 @Mapper(componentModel = "spring")
 public interface UserMapper {
+    @Mapping(source = "user.plainGeneratedPassword", target = "password")
     UserCreatedDto toCreatedUserDto(User user);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
