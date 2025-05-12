@@ -8,6 +8,7 @@ import com.diegohrp.gymapi.entity.training.Training;
 import com.diegohrp.gymapi.entity.user.Trainee;
 import com.diegohrp.gymapi.entity.user.Trainer;
 import com.diegohrp.gymapi.enums.ActionTypes;
+import com.diegohrp.gymapi.jms.TrainerWorkloadProducer;
 import com.diegohrp.gymapi.mapper.TrainerMapper;
 import com.diegohrp.gymapi.repository.TrainingRepository;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
@@ -30,7 +31,8 @@ public class TrainingService {
     private final TraineeService traineeService;
     private final TrainerService trainerService;
     private final TrainerMapper trainerMapper;
-    private final TrainerWorkloadClient trainerWorkloadClient;
+    //private final TrainerWorkloadClient trainerWorkloadClient;
+    private final TrainerWorkloadProducer messageProducer;
     private final TrainingRepository trainingRepository;
 
     @Transactional
@@ -55,7 +57,7 @@ public class TrainingService {
         );
 
         TrainerWorkloadDto workload = trainerMapper.toTrainerWorkloadDto(trainer, training,trainingHours, ActionTypes.ADD);
-        trainerWorkloadClient.send(workload);
+        messageProducer.sendWorkload(workload);
         return training;
     }
 
